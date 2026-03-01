@@ -1,0 +1,231 @@
+/* Quiz Wizard Styles */
+
+.quiz-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.quiz-header {
+  text-align: center;
+  color: white;
+  margin-bottom: 40px;
+}
+
+.quiz-header h1 {
+  font-size: 2.5em;
+  margin-bottom: 10px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.quiz-header p {
+  font-size: 1.1em;
+  opacity: 0.9;
+}
+
+.quiz-content {
+  background: white;
+  border-radius: 16px;
+  padding: 40px;
+  box-shadow: var(--shadow-lg);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 500px;
+}
+
+/* Question Box */
+.question-box {
+  margin-bottom: 0;
+  display: flex;
+  flex-direction: column;
+  height: 350px;
+  order: 2;
+}
+
+.question-box h2 {
+  font-size: 1.5em;
+  margin-bottom: 30px;
+  color: var(--text-dark);
+  line-height: 1.6;
+  flex-shrink: 0;
+  max-height: 100px;
+  overflow: hidden;
+}
+
+/* Answer Container */
+.scale-container {
+  margin-bottom: 0;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  height: 110px;
+  padding-top: 10px;
+  border-top: 1px solid #f0f0f0;
+  order: 3;
+  margin-top: auto;
+}
+
+.scale-labels {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  font-size: 0.8em;
+  color: var(--text-light);
+  flex-shrink: 0;
+}
+
+.scale-options {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  gap: 8px;
+  width: 100%;
+  height: 48px;
+  flex-shrink: 0;
+}
+
+.scale-btn {
+  padding: 0;
+  height: 48px;
+  width: 100%;
+  border: 2px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--bg-white);
+  color: var(--text-dark);
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+  font-size: 0.8em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  line-height: 1;
+}
+
+.scale-btn:hover {
+  border-color: var(--primary-color);
+  background-color: #eff6ff;
+}
+
+.scale-btn.active {
+  background-color: var(--primary-color);
+  color: white;
+  border-color: var(--primary-color);
+  box-shadow: none;
+}
+
+/* Choice Options */
+
+.choice-options {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  flex-shrink: 0;
+  height: 250px;
+  overflow-y: auto;
+}
+
+.choice-btn {
+  display: flex;
+  align-items: flex-start;
+  gap: 15px;
+  padding: 20px;
+  border: 2px solid var(--border-color);
+  border-radius: 12px;
+  background: var(--bg-white);
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+  text-align: left;
+  flex-shrink: 0;
+}
+
+.choice-btn:hover {
+  border-color: var(--primary-color);
+  background-color: #eff6ff;
+}
+
+.choice-btn.active {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+  color: white;
+}
+
+.choice-letter {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 1.1em;
+  flex-shrink: 0;
+}
+
+.choice-btn.active .choice-letter {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+.choice-text {
+  flex: 1;
+  font-size: 0.95em;
+  line-height: 1.5;
+  font-weight: 500;
+}
+
+/* Button Group */
+.button-group {
+  display: flex;
+  gap: 15px;
+  justify-content: space-between;
+  margin-top: auto;
+  padding-top: 20px;
+  order: 4;
+}
+
+.button-group .btn {
+  flex: 1;
+  padding: 12px 24px;
+  font-size: 1em;
+}
+
+/* Quiz Footer */
+.quiz-footer {
+  text-align: center;
+  margin-top: 20px;
+  color: var(--text-light);
+  font-size: 0.9em;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .quiz-container {
+    padding: 20px 10px;
+  }
+
+  .quiz-content {
+    padding: 20px;
+  }
+
+  .quiz-header h1 {
+    font-size: 1.8em;
+  }
+
+  .question-box h2 {
+    font-size: 1.2em;
+  }
+
+  .scale-options {
+    grid-template-columns: repeat(5, 1fr);
+  }
+
+  .button-group {
+    flex-direction: column;
+  }
+}
