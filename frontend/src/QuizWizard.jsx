@@ -1,8 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ProgressBar from "./ProgressBar";
 import Results from "./Results";
 import API from "./api";
 import "./QuizWizard.css";
+
+const QUIZ_STATE_STORAGE_KEY = "career_quiz_state_v1";
 
 // Quiz questions definition (exactly as specified)
 const QUIZ_QUESTIONS = [
@@ -235,6 +237,53 @@ function QuizWizard() {
   const [results, setResults] = useState(null);
   const [profile, setProfile] = useState(null); // user profile breakdown for charts
   const [error, setError] = useState(null);
+  const [isHydrated, setIsHydrated] = useState(false);
+
+  useEffect(() => {
+    try {
+      const rawState = localStorage.getItem(QUIZ_STATE_STORAGE_KEY);
+      if (!rawState) {
+        setIsHydrated(true);
+        return;
+      }
+
+      const savedState = JSON.parse(rawState);
+      if (typeof savedState.currentQuestion === "number") {
+        setCurrentQuestion(
+          Math.min(
+            Math.max(savedState.currentQuestion, 0),
+            QUIZ_QUESTIONS.length - 1
+          )
+        );
+      }
+      if (savedState.answers && typeof savedState.answers === "object") {
+        setAnswers(savedState.answers);
+      }
+      if (Array.isArray(savedState.results)) {
+        setResults(savedState.results);
+      }
+      if (savedState.profile && typeof savedState.profile === "object") {
+        setProfile(savedState.profile);
+      }
+    } catch (restoreError) {
+      console.error("Failed to restore quiz state:", restoreError);
+    } finally {
+      setIsHydrated(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!isHydrated) return;
+
+    const stateToSave = {
+      currentQuestion,
+      answers,
+      results,
+      profile,
+    };
+
+    localStorage.setItem(QUIZ_STATE_STORAGE_KEY, JSON.stringify(stateToSave));
+  }, [currentQuestion, answers, results, profile, isHydrated]);
 
   const currentQ = QUIZ_QUESTIONS[currentQuestion];
   const isLastQuestion = currentQuestion === QUIZ_QUESTIONS.length - 1;
@@ -276,10 +325,21 @@ function QuizWizard() {
     setError(null);
 
     try {
-      const response = await API.getRecommendations(answers, false);
-      setResults(response.results);
-      if (response.profile_scores) {
-        setProfile(response.profile_scores);
+      // Convert q1, q2, ... to 1, 2, ... for backend
+      const numericAnswers = {};
+      Object.keys(answers).forEach(key => {
+        const numKey = parseInt(key.replace('q', ''));
+        numericAnswers[numKey] = answers[key];
+      });
+
+      const token = localStorage.getItem("token");
+      const response = await API.predict(numericAnswers, token);
+      
+      if (response.success && response.predictions) {
+        setResults(response.predictions.top_careers || []);
+        if (response.predictions.profile) {
+          setProfile(response.predictions.profile);
+        }
       }
     } catch (err) {
       setError(
@@ -296,7 +356,9 @@ function QuizWizard() {
     setCurrentQuestion(0);
     setAnswers({});
     setResults(null);
+    setProfile(null);
     setError(null);
+    localStorage.removeItem(QUIZ_STATE_STORAGE_KEY);
   };
 
   // Show results if quiz is completed
@@ -315,7 +377,7 @@ function QuizWizard() {
     <div className="quiz-container">
       <div className="quiz-header">
         <h1>Career Recommendation Quiz</h1>
-        <p>Answer 25 questions to discover your ideal careers</p>
+        <p className="quiz-subtitle">Answer 35 questions to discover your ideal careers</p>
       </div>
 
       <ProgressBar current={currentQuestion} total={QUIZ_QUESTIONS.length} />

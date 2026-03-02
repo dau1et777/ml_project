@@ -12,6 +12,9 @@
 .quiz-header {
   text-align: center;
   color: white;
+  background: linear-gradient(135deg, #4f46e5, #7c3aed);
+  border-radius: 14px;
+  padding: 20px 24px;
   margin-bottom: 40px;
 }
 
@@ -24,6 +27,11 @@
 .quiz-header p {
   font-size: 1.1em;
   opacity: 0.9;
+}
+
+.quiz-subtitle {
+  color: #ede9fe;
+  font-weight: 600;
 }
 
 .quiz-content {

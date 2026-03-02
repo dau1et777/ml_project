@@ -9,7 +9,7 @@ import InterestChart from "./InterestChart";
  * @param {Array} recommendations - Array of recommended careers
  * @param {Function} onRestart - Callback to restart quiz
  */
-function Results({ recommendations, profile, onRestart }) {
+function Results({ recommendations, profile, onRestart, actionLabel = "Retake Quiz" }) {
   return (
     <div className="results-container">
       <div className="results-header">
@@ -66,7 +66,7 @@ function Results({ recommendations, profile, onRestart }) {
 
       <div className="results-footer">
         <button className="btn btn-primary btn-large" onClick={onRestart}>
-          Retake Quiz
+          {actionLabel}
         </button>
         <p className="footer-text">
           💡 Share these results with mentors or career counselors for more insights
