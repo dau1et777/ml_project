@@ -12,6 +12,7 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [view, setView] = useState("quiz"); // 'quiz', 'profile', 'careers'
   const [showSignup, setShowSignup] = useState(false);
+  const [careerToOpen, setCareerToOpen] = useState(null);
 
   useEffect(() => {
     // Check if user is already logged in
@@ -35,6 +36,19 @@ function App() {
   const handleLogout = () => {
     setUser(null);
     setView("quiz");
+  };
+
+  const handleNavigateToCareer = (careerName) => {
+    setCareerToOpen(careerName);
+    setView("careers");
+  };
+
+  // Clear career when switching tabs
+  const handleViewChange = (newView) => {
+    if (newView !== "careers") {
+      setCareerToOpen(null);
+    }
+    setView(newView);
   };
 
   if (loading) {
@@ -69,19 +83,19 @@ function App() {
         <div className="nav-links">
           <button
             className={view === "quiz" ? "active" : ""}
-            onClick={() => setView("quiz")}
+            onClick={() => handleViewChange("quiz")}
           >
             Take Quiz
           </button>
           <button
             className={view === "careers" ? "active" : ""}
-            onClick={() => setView("careers")}
+            onClick={() => handleViewChange("careers")}
           >
             Browse Careers
           </button>
           <button
             className={view === "profile" ? "active" : ""}
-            onClick={() => setView("profile")}
+            onClick={() => handleViewChange("profile")}
           >
             Profile
           </button>
@@ -89,9 +103,9 @@ function App() {
       </nav>
 
       <main className="app-main">
-        {view === "quiz" && <QuizWizard />}
-        {view === "careers" && <CareerList />}
-        {view === "profile" && <Profile user={user} onLogout={handleLogout} />}
+        {view === "quiz" && <QuizWizard onNavigateToCareer={handleNavigateToCareer} />}
+        {view === "careers" && <CareerList careerToOpen={careerToOpen} onCareerOpened={() => setCareerToOpen(null)} />}
+        {view === "profile" && <Profile user={user} onLogout={handleLogout} onNavigateToCareer={handleNavigateToCareer} />}
       </main>
     </div>
   );

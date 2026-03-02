@@ -19,10 +19,22 @@ Full-stack career recommendation app using a Django REST API, React frontend, an
 
 ## Quick start
 
-### 1) Backend
+### Automated Setup (Windows)
 
+```powershell
+.\setup.ps1    # One-time setup
+.\start.ps1    # Start both servers
+```
+
+### Manual Setup
+
+**Backend:**
 ```bash
 cd backend
+python -m venv .venv
+.venv\Scripts\activate     # Windows
+source .venv/bin/activate  # Mac/Linux
+pip install -r requirements.txt
 python manage.py migrate
 python manage.py populate_initial_data
 python manage.py runserver
@@ -30,8 +42,7 @@ python manage.py runserver
 
 Backend runs on `http://localhost:8000`.
 
-### 2) Frontend
-
+**Frontend:**
 ```bash
 cd frontend
 npm install
@@ -71,5 +82,6 @@ Frontend runs on `http://localhost:3000`.
 
 - `README.md` (this file)
 - `QUICKSTART.md` (step-by-step run guide)
+- `TRANSFER.md` (how to move project to another computer)
 - `QUICK_REFERENCE.txt` (command and endpoint cheat sheet)
 - `BACKEND_SETUP_GUIDE.txt` (backend-focused setup and troubleshooting)

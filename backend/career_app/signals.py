@@ -112,6 +112,8 @@ def _create_careers():
         ('Marketing Manager', 'Develop and execute marketing strategies', 85000, 180000, 'high'),
         ('Product Manager', 'Oversee product development and strategy', 95000, 200000, 'high'),
         ('Sales Manager', 'Lead and manage sales teams', 80000, 200000, 'medium'),
+        ('Channel Manager', 'Manage partner channels and relationships', 85000, 180000, 'medium'),
+        ('Procurement Manager', 'Manage vendor relationships and purchasing', 80000, 170000, 'medium'),
         ('Operations Manager', 'Manage business operations and efficiency', 80000, 160000, 'medium'),
         ('HR Manager', 'Manage human resources and employee relations', 75000, 150000, 'medium'),
         

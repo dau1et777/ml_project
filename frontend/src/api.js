@@ -24,11 +24,11 @@ export const API = {
     return res.json(); // { success, token, user }
   },
 
-  async login({ username, password }) {
+  async login({ email, password }) {
     const res = await fetch(`${API_BASE_URL}/auth/login/`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username, password }),
+      body: JSON.stringify({ email, password }),
     });
     if (!res.ok) {
       const err = await res.json();

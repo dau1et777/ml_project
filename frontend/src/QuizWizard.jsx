@@ -230,7 +230,7 @@ const QUIZ_QUESTIONS = [
 /**
  * QuizWizard Component - Main quiz interface
  */
-function QuizWizard() {
+function QuizWizard({ onNavigateToCareer }) {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState({});
   const [isLoading, setIsLoading] = useState(false);
@@ -361,6 +361,12 @@ function QuizWizard() {
     localStorage.removeItem(QUIZ_STATE_STORAGE_KEY);
   };
 
+  const handleCareerClick = (recommendation) => {
+    if (onNavigateToCareer) {
+      onNavigateToCareer(recommendation.career);
+    }
+  };
+
   // Show results if quiz is completed
   if (results) {
     return (
@@ -368,6 +374,7 @@ function QuizWizard() {
         recommendations={results}
         profile={profile}
         onRestart={handleRestart}
+        onCareerClick={handleCareerClick}
       />
     );
   }

@@ -3,7 +3,7 @@ import API from "./api";
 import "./Auth.css";
 
 function Login({ onLogin, onSwitchToSignup }) {
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -14,7 +14,7 @@ function Login({ onLogin, onSwitchToSignup }) {
     setLoading(true);
 
     try {
-      const data = await API.login({ username, password });
+      const data = await API.login({ email, password });
       localStorage.setItem("token", data.token);
       onLogin(data.user);
     } catch (err) {
@@ -32,13 +32,13 @@ function Login({ onLogin, onSwitchToSignup }) {
         
         <form onSubmit={handleSubmit} className="auth-form">
           <div className="form-group">
-            <label htmlFor="username">Username</label>
+            <label htmlFor="email">Email</label>
             <input
-              id="username"
-              type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              placeholder="Enter your username"
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Enter your email"
               required
               disabled={loading}
             />

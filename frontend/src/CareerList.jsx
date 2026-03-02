@@ -3,7 +3,7 @@ import API from "./api";
 import CareerDetail from "./CareerDetail";
 import "./CareerList.css";
 
-function CareerList() {
+function CareerList({ careerToOpen, onCareerOpened }) {
   const [careers, setCareers] = useState([]);
   const [allCareers, setAllCareers] = useState([]);
   const [bookmarkedNames, setBookmarkedNames] = useState([]);
@@ -15,6 +15,19 @@ function CareerList() {
   useEffect(() => {
     loadCareers();
   }, []);
+
+  // Auto-open career when careerToOpen is provided
+  useEffect(() => {
+    if (careerToOpen && allCareers.length > 0) {
+      const career = allCareers.find(c => c.name === careerToOpen);
+      if (career) {
+        openCareer(career);
+        if (onCareerOpened) {
+          onCareerOpened();
+        }
+      }
+    }
+  }, [careerToOpen, allCareers]);
 
   const loadCareers = async () => {
     try {

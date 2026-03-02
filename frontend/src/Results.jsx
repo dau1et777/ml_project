@@ -8,8 +8,9 @@ import InterestChart from "./InterestChart";
  * Results Component - Display recommendation results
  * @param {Array} recommendations - Array of recommended careers
  * @param {Function} onRestart - Callback to restart quiz
+ * @param {Function} onCareerClick - Callback when a career is clicked
  */
-function Results({ recommendations, profile, onRestart, actionLabel = "Retake Quiz" }) {
+function Results({ recommendations, profile, onRestart, onCareerClick, actionLabel = "Retake Quiz" }) {
   return (
     <div className="results-container">
       <div className="results-header">
@@ -31,7 +32,11 @@ function Results({ recommendations, profile, onRestart, actionLabel = "Retake Qu
 
       <div className="results-list">
         {recommendations.map((rec, index) => (
-          <div key={index} className={`result-card rank-${rec.rank}`}>
+          <div 
+            key={index} 
+            className={`result-card rank-${rec.rank} ${onCareerClick ? 'clickable' : ''}`}
+            onClick={() => onCareerClick && onCareerClick(rec)}
+          >
             <div className="result-rank">#{rec.rank}</div>
 
             <div className="result-content">

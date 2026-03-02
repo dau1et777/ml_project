@@ -3,7 +3,7 @@ import API from "./api";
 import Results from "./Results";
 import "./Profile.css";
 
-function Profile({ user, onLogout }) {
+function Profile({ user, onLogout, onNavigateToCareer }) {
   const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedHistoryItem, setSelectedHistoryItem] = useState(null);
@@ -41,6 +41,12 @@ function Profile({ user, onLogout }) {
     onLogout();
   };
 
+  const handleCareerClick = (recommendation) => {
+    if (onNavigateToCareer) {
+      onNavigateToCareer(recommendation.career);
+    }
+  };
+
   const normalizeRecommendations = (result) => {
     const explanations = result?.explanation || {};
 
@@ -70,6 +76,7 @@ function Profile({ user, onLogout }) {
         recommendations={normalizeRecommendations(selectedHistoryItem)}
         profile={selectedHistoryItem.profile}
         onRestart={() => setSelectedHistoryItem(null)}
+        onCareerClick={handleCareerClick}
         actionLabel="Back to Quiz History"
       />
     );

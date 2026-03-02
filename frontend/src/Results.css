@@ -54,6 +54,19 @@
   box-shadow: var(--shadow-lg);
 }
 
+.result-card.clickable {
+  cursor: pointer;
+}
+
+.result-card.clickable:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+}
+
+.result-card.clickable:active {
+  transform: translateY(-4px) scale(1.01);
+}
+
 .result-card::before {
   content: "";
   position: absolute;
