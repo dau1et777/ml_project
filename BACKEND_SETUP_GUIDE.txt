@@ -1,486 +1,61 @@
-"""
-=============================================================================
-CAREER GUIDANCE PLATFORM - COMPLETE SETUP GUIDE
-Production-Ready Full Stack Implementation
-=============================================================================
+CAREER GUIDANCE PLATFORM - BACKEND SETUP GUIDE
+=============================================
 
-This guide will walk you through setting up and running the complete 
-career guidance platform with ML integration, database, and REST API.
+1) Setup
+--------
 
-==============================================================================
-PART 1: VERIFY INSTALLATION & SETUP
-==============================================================================
+cd backend
+python manage.py migrate
+python manage.py populate_initial_data
+python manage.py createsuperuser
 
-1. Navigate to backend directory:
-   cd backend
+2) Run server
+-------------
 
-2. Check Python version (should be 3.9+):
-   python --version
+python manage.py runserver
 
-3. Activate virtual environment (if not already activated):
-   # On Windows:
-   .venv\Scripts\activate
-   
-   # On macOS/Linux:
-   source .venv/bin/activate
+Backend: http://localhost:8000
+Admin:   http://localhost:8000/admin/
 
-4. Install/update dependencies:
-   pip install -r requirements.txt
+3) Quick API checks
+-------------------
 
-5. Verify installed packages:
-   pip list | grep -E "Django|djangorestframework|django-cors"
-
-==============================================================================
-PART 2: DATABASE SETUP
-==============================================================================
-
-1. CREATE MIGRATIONS
-   Generate Django migration files from models:
-   
-   python manage.py makemigrations career_app
-   
-   Expected output:
-   - 0001_initial.py created in career_app/migrations/
-   
-2. APPLY MIGRATIONS
-   Create actual database tables:
-   
-   python manage.py migrate
-   
-   Expected output:
-   - Operations to perform
-   - Tables created (auth, authtoken, django, career_app)
-   
-3. POPULATE INITIAL DATA
-   Create 35 quiz questions, 85+ careers, and skills:
-   
-   python manage.py populate_initial_data
-   
-   Expected output:
-   - Created 35 quiz questions
-   - Created 85+ careers
-   - Created 45+ skills
-   - Created 50+ career-skill relationships
-   
-   (Optional) Clear and repopulate:
-   python manage.py populate_initial_data --clear
-
-4. CREATE ADMIN USER (SUPERUSER)
-   python manage.py createsuperuser
-   
-   You'll be prompted:
-   - Username: admin
-   - Email: admin@example.com
-   - Password: (enter secure password - at least 8 chars)
-   - Password (again): (confirm)
-   
-   Expected output:
-   - Superuser created successfully
-
-5. VERIFY DATABASE
-   Check that db.sqlite3 was created:
-   ls -la db.sqlite3
-   
-   Or on Windows:
-   dir db.sqlite3
-
-==============================================================================
-PART 3: START DEVELOPMENT SERVER
-==============================================================================
-
-1. RUN DJANGO SERVER
-   python manage.py runserver
-   
-   Expected output:
-   - Starting development server at http://127.0.0.1:8000/
-   - Django version 4.2.7
-   - Type 'quit' to exit
-
-2. VERIFY SERVER IS RUNNING
-   In a new terminal:
-   curl http://localhost:8000/api/health/
-   
-   Expected output:
-   {
-     "status": "healthy",
-     "ml_model": "ready",
-     "database": "connected"
-   }
-
-==============================================================================
-PART 4: ACCESS ADMIN INTERFACE
-==============================================================================
-
-1. NAVIGATE TO ADMIN
-   Open browser: http://localhost:8000/admin/
-   
-2. LOGIN
-   Username: admin
-   Password: (your superuser password)
-   
-3. MANAGE DATA
-   You can now:
-   - View All Quiz Questions (should see 35)
-   - View All Careers (should see 85+)
-   - View All Skills (should see 45+)
-   - Create new Careers/Skills
-   - Manage User Accounts
-   - View User Results
-
-==============================================================================
-PART 5: TEST API ENDPOINTS
-==============================================================================
-
-### Option A: Using cURL (Command Line)
-
-1. HEALTH CHECK (No auth required)
-```bash
+Health:
 curl http://localhost:8000/api/health/
-```
 
-2. SYSTEM INFO (No auth required)
-```bash
+Info:
 curl http://localhost:8000/api/info/
-```
 
-3. CREATE USER ACCOUNT
-```bash
-curl -X POST http://localhost:8000/api/auth/signup/ \
-  -H "Content-Type: application/json" \
-  -d '{
-    "email": "user@example.com",
-    "username": "testuser",
-    "password": "SecurePass123",
-    "first_name": "John"
-  }'
-```
+4) Core endpoints
+-----------------
 
-Response:
-{
-  "success": true,
-  "message": "User created successfully",
-  "user": {
-    "id": 2,
-    "username": "testuser",
-    "email": "user@example.com"
-  },
-  "token": "abc123def456..."
-}
+Public:
+- GET /api/health/
+- GET /api/info/
+- GET /api/careers/
+- GET /api/careers/{id}/
+- GET /api/careers/{id}/roadmap/
 
-SAVE THE TOKEN! You'll need it for authenticated requests.
+Authenticated:
+- POST /api/auth/signup/
+- POST /api/auth/login/
+- GET  /api/auth/profile/
+- POST /api/predict/
+- GET  /api/predict/history/
+- POST /api/careers/{id}/bookmark/
+- GET  /api/skill-gap/?career=<name>
+- GET  /api/learning-path/?career=<name>
 
-4. LOGIN (If you already have account)
-```bash
-curl -X POST http://localhost:8000/api/auth/login/ \
-  -H "Content-Type: application/json" \
-  -d '{
-    "email": "user@example.com",
-    "password": "SecurePass123"
-  }'
-```
+5) Notes
+--------
 
-5. TEST AUTHENTICATED ENDPOINT
-```bash
-TOKEN="your-token-here"
-curl -X GET http://localhost:8000/api/auth/profile/ \
-  -H "Authorization: Token ${TOKEN}"
-```
+- Prediction history stores recommendation snapshots and profile chart data.
+- Profile page can reopen past quiz results with cards and charts.
 
-6. MAKE PREDICTION
-```bash
-TOKEN="your-token-here"
-curl -X POST http://localhost:8000/api/predict/ \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Token ${TOKEN}" \
-  -d '{
-    "answers": {
-      "1": 8, "2": 6, "3": 7, "4": 9, "5": 8,
-      "6": 7, "7": 6, "8": 8, "9": 5, "10": 7,
-      "11": 6, "12": 8, "13": 7, "14": 6, "15": 8,
-      "16": 9, "17": 6, "18": 5, "19": 7, "20": 8,
-      "21": "A", "22": "B", "23": "A", "24": "A", "25": "B",
-      "26": 9, "27": 8, "28": 5, "29": 6, "30": 8,
-      "31": 8, "32": 4, "33": 5, "34": 7, "35": 8
-    },
-    "save_result": true
-  }'
-```
+6) Troubleshooting
+------------------
 
-Expected Response:
-{
-  "success": true,
-  "predictions": {
-    "top_careers": [
-      {
-        "rank": 1,
-        "name": "Software Engineer",
-        "match_score": 0.8934
-      },
-      ...
-    ],
-    "scores": {...},
-    "explanation": {...}
-  },
-  "result_id": "uuid-here"
-}
-
-### Option B: Using Python Script
-
-Save as: test_api.py
-
-```python
-#!/usr/bin/env python3
-import requests
-import json
-
-BASE_URL = "http://localhost:8000/api"
-
-print("🚀 Testing Career Guidance API\n")
-
-# 1. Health Check
-print("1️⃣  Health Check...")
-resp = requests.get(f"{BASE_URL}/health/")
-print(f"   Status: {resp.status_code}")
-print(f"   ML Model: {resp.json().get('ml_model')}\n")
-
-# 2. Get System Info
-print("2️⃣  System Info...")
-resp = requests.get(f"{BASE_URL}/info/")
-data = resp.json()
-print(f"   Platform: {data['platform']}")
-print(f"   Total Careers: {data['total_careers']}")
-print(f"   Total Skills: {data['total_skills']}\n")
-
-# 3. Signup
-print("3️⃣  Creating User Account...")
-signup_resp = requests.post(f"{BASE_URL}/auth/signup/", json={
-    "email": "testuser@example.com",
-    "username": "testuser",
-    "password": "SecurePassword123",
-    "first_name": "Test"
-})
-if signup_resp.status_code in [201, 200]:
-    token = signup_resp.json().get('token')
-    print(f"   ✅ User created!")
-    print(f"   Token: {token[:20]}...\n")
-else:
-    print(f"   ❌ Error: {signup_resp.status_code}")
-    print(f"   {signup_resp.json()}\n")
-    exit(1)
-
-headers = {"Authorization": f"Token {token}"}
-
-# 4. Get User Profile
-print("4️⃣  Getting User Profile...")
-resp = requests.get(f"{BASE_URL}/auth/profile/", headers=headers)
-print(f"   Username: {resp.json()['profile']['username']}")
-print(f"   Email: {resp.json()['profile']['email']}\n")
-
-# 5. Make Prediction
-print("5️⃣  Making Career Prediction...")
-prediction_resp = requests.post(f"{BASE_URL}/predict/", 
-    headers=headers,
-    json={
-        "answers": {
-            "1": 8, "2": 6, "3": 7, "4": 9, "5": 8,
-            "6": 7, "7": 6, "8": 8, "9": 5, "10": 7,
-            "11": 6, "12": 8, "13": 7, "14": 6, "15": 8,
-            "16": 9, "17": 6, "18": 5, "19": 7, "20": 8,
-            "21": "A", "22": "B", "23": "A", "24": "A", "25": "B",
-            "26": 9, "27": 8, "28": 5, "29": 6, "30": 8,
-            "31": 8, "32": 4, "33": 5, "34": 7, "35": 8
-        },
-        "save_result": True
-    }
-)
-if prediction_resp.status_code == 200:
-    data = prediction_resp.json()
-    print(f"   ✅ Prediction successful!")
-    for career in data['predictions']['top_careers'][:3]:
-        print(f"   {career['rank']}. {career['name']} ({career['match_score']:.2%})")
-    print()
-else:
-    print(f"   ❌ Error: {prediction_resp.status_code}\n")
-
-# 6. Get Prediction History
-print("6️⃣  Getting Prediction History...")
-history_resp = requests.get(f"{BASE_URL}/predict/history/", headers=headers)
-count = history_resp.json().get('count', 0)
-print(f"   Total predictions saved: {count}\n")
-
-# 7. List All Careers
-print("7️⃣  Listing Careers...")
-careers_resp = requests.get(f"{BASE_URL}/careers/")
-careers = careers_resp.json()
-print(f"   Total careers available: {len(careers)}")
-if careers:
-    print(f"   Sample: {careers[0]['name']}\n")
-
-# 8. Skill Gap Analysis
-print("8️⃣  Skill Gap Analysis...")
-gap_resp = requests.get(f"{BASE_URL}/skill-gap/?career=Software%20Engineer", 
-    headers=headers)
-if gap_resp.status_code == 200:
-    gap_data = gap_resp.json()
-    print(f"   Career: {gap_data['career']}")
-    print(f"   Missing skills: {len(gap_data['gap_analysis']['missing'])}")
-    print(f"   Skills to develop: {len(gap_data['gap_analysis']['develop'])}")
-    print(f"   Strong skills: {len(gap_data['gap_analysis']['strong'])}\n")
-else:
-    print(f"   Career not found\n")
-
-# 9. Learning Path Recommendations
-print("9️⃣  Learning Recommendations...")
-path_resp = requests.get(f"{BASE_URL}/learning-path/?career=Product%20Manager", 
-    headers=headers)
-if path_resp.status_code == 200:
-    recs = path_resp.json().get('recommendations', [])
-    print(f"   Total recommendations: {len(recs)}")
-    if recs:
-        print(f"   Top: {recs[0]['skill']} - {recs[0]['action']}\n")
-else:
-    print(f"   Career not found\n")
-
-print("✅ All tests passed!")
-```
-
-Run the test:
-```bash
-python test_api.py
-```
-
-### Option C: Using Postman
-
-1. Download Postman: https://www.postman.com/downloads/
-2. Create new request collection
-3. Import endpoints from sample requests above
-4. For authenticated endpoints:
-   - Get token from signup/login
-   - Add header: Authorization: Token {token}
-
-==============================================================================
-PART 6: TROUBLESHOOTING
-==============================================================================
-
-**Problem: "ModuleNotFoundError: No module named 'career_app'"**
-Solution:
-- Make sure you're in the backend directory
-- Check that INSTALLED_APPS includes 'career_app' in settings.py
-- Run: python manage.py migrate
-
-**Problem: "django.db.utils.OperationalError: no such table"**
-Solution:
-- Run migrations: python manage.py migrate
-- Check if migrations exist: ls career_app/migrations/
-
-**Problem: 404 errors on API endpoints**
-Solution:
-- Verify URLs are correct in config/urls.py
-- Check urls.py includes career_app.urls
-- Run: python manage.py url
-
-**Problem: "Token not found" on authenticated requests**
-Solution:
-- Make sure you're passing the Authorization header
-- Format: Authorization: Token {token}
-- Don't include quotes around token
-- Verify token from signup/login response
-
-**Problem: ML model not loading**
-Solution:
-- Check that ml/ directory has recommender.py and other modules
-- Verify sys.path in ml_service.py includes ml directory
-- Test: python manage.py shell
-  ```
-  from ml.recommender import get_career_recommendations
-  ```
-
-**Problem: Port 8000 already in use**
-Solution:
-- Use different port: python manage.py runserver 8001
-- Or kill process: lsof -ti:8000 | xargs kill -9
-
-==============================================================================
-PART 7: NEXT STEPS - REACT FRONTEND
-==============================================================================
-
-Your React quiz frontend can now connect to these API endpoints:
-
-1. Update frontend API base URL (usually in .env or a config file):
-   REACT_APP_API_URL=http://localhost:8000/api
-
-2. Update your QuizWizard component to POST to:
-   POST /api/predict/
-   with Authorization header: Token {user_token}
-
-3. Store token from signup/login in localStorage:
-   localStorage.setItem('authToken', response.token)
-
-4. Create Login/Signup pages that call:
-   POST /api/auth/signup/
-   POST /api/auth/login/
-
-5. Display results from:
-   <predictions response>
-
-6. Add new pages for:
-   - Career Browsing: GET /api/careers/
-   - Skill Gap Analysis: GET /api/skill-gap/?career=name
-   - Learning Path: GET /api/learning-path/?career=name
-   - User Profile: GET /api/auth/profile/
-
-==============================================================================
-PART 8: PRODUCTION DEPLOYMENT
-==============================================================================
-
-Before deploying to production:
-
-1. Update settings.py:
-   - Change SECRET_KEY to a secure random value
-   - Set DEBUG = False
-   - Add your domain to ALLOWED_HOSTS
-   - Use production database (PostgreSQL/MySQL)
-   - Configure email backend for verification
-
-2. Update CORS settings:
-   - Add frontend domain to CORS_ALLOWED_ORIGINS
-   - Remove localhost entries
-
-3. Security:
-   - Use environment variables for secrets
-   - Enable HTTPS
-   - Add rate limiting
-   - Implement API key or OAuth2
-   - Set up logging
-
-4. Database:
-   - Migrate to PostgreSQL or MySQL
-   - Set up automated backups
-   - Configure connection pooling
-
-5. Deployment:
-   - Use Gunicorn as WSGI server
-   - Use Nginx as reverse proxy
-   - Docker containerization optional
-   - CI/CD pipeline recommended
-
-==============================================================================
-CONGRATULATIONS! 🎉
-==============================================================================
-
-Your career guidance platform is now:
-✅ Running with complete ML integration
-✅ Connected to database with models
-✅ Serving REST API with authentication
-✅ Ready for React frontend integration
-✅ Providing career predictions and analysis
-
-For more info:
-- Django: https://docs.djangoproject.com/
-- DRF: https://www.django-rest-framework.org/
-- ML Service: See ml_service.py docstrings
-
-Questions? Check BACKEND_IMPLEMENTATION_GUIDE.md for detailed API documentation.
-
-==============================================================================
-"""
+- "no such table" -> python manage.py migrate
+- Protected route unauthorized -> add Authorization header:
+  Authorization: Token <token>
+- Port 8000 busy -> python manage.py runserver 8001
